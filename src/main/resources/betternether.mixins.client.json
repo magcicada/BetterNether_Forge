@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "org.betterx.betternether.mixin.client",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "betternether.refmap.json",
+  "client": [
+    "LavaFluidMixin",
+    "MinecraftClientMixin",
+    "PlayerArmorMixin",
+    "StandArmorMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "flaming_ruby_hoe",
+  "key": {
+    "#": {
+      "item": "minecraft:sculk_catalyst"
+    },
+    "I": {
+      "item": "betternether:nether_reed_stem"
+    }
+  },
+  "pattern": [
+    "##",
+    " I",
+    " I"
+  ],
+  "result": {
+    "item": "betternether:flaming_ruby_hoe"
+  },
+  "show_notification": true
+}
