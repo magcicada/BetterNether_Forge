@@ -19,7 +19,7 @@ public class PortalShapeMixin {
     @Unique
     private BNPortalShape bn_shape;
 
-    @Inject(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/lang/Object;<init>()V", shift = At.Shift.AFTER))
+    @Inject(method = "<init>", at = @At("TAIL"))
     private void bn_init(LevelAccessor levelAccessor, BlockPos blockPos, Direction.Axis axis, CallbackInfo ci) {
         bn_shape = new BNPortalShape(levelAccessor, blockPos, axis);
     }
