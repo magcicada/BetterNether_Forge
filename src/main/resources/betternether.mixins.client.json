@@ -4,8 +4,10 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "betternether.refmap.json",
   "client": [
+    "AbstractSoundInstanceAccessor",
     "LavaFluidMixin",
     "MinecraftClientMixin",
+    "MusicTrackerMixin",
     "PlayerArmorMixin",
     "StandArmorMixin"
   ],
