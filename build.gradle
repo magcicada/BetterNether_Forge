@@ -447,27 +447,7 @@ task nextVersion() {
     }
 }
 
-tasks.register("copyModrinthJars", Copy) {
-    dependsOn(tasks.named("reobfJar"))
-    from(betterNetherReobfJar) {
-        rename { tasks.named("jar").get().archiveFileName.get() }
-    }
-    if (local_bclib) {
-        dependsOn(project(":BCLib").tasks.named("reobfJar"))
-        from(bclibReobfJar) {
-            rename { project(":BCLib").tasks.named("jar").get().archiveFileName.get() }
-        }
-    }
-    if (local_wunderlib) {
-        dependsOn(project(":WunderLib").tasks.named("reobfJar"))
-        from(wunderlibReobfJar) {
-            rename { project(":WunderLib").tasks.named("jar").get().archiveFileName.get() }
-        }
-    }
-    into(modrinthModsDir)
-}
-
 tasks.named("build") {
     dependsOn(tasks.named("generateBetterXResources"))
-    finalizedBy("copyDistJars", "copyModrinthJars")
+    //finalizedBy("copyDistJars", "copyModrinthJars")
 }
