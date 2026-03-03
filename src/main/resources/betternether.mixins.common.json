@@ -16,7 +16,6 @@
     "ItemStackMixin",
     "LeavesBlockMixin",
     "LightningRodBlockMixin",
-    "LiquidBlockMixin",
     "LocateCommandInvoker",
     "LootTableBuilderAccessor",
     "MapMixin",
