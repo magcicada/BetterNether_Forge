@@ -34,6 +34,7 @@ targetCompatibility = JavaVersion.VERSION_17
 archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
+def refmapName = "${project.mod_id}.refmap.json"
 
 def local_bclib = findProject(':BCLib') != null
 def local_wunderlib = findProject(':WunderLib') != null
@@ -186,9 +187,18 @@ processResources {
     }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
+    def refmapOutput = layout.buildDirectory.file("resources/main/${refmapName}")
+    outputs.file(refmapOutput)
+
     options.encoding = "UTF-8"
     it.options.release = 17
+
+    doFirst {
+        def args = options.compilerArgs
+        args.removeAll { it.startsWith("-AoutRefMapFile=") }
+        args.add("-AoutRefMapFile=${refmapOutput.get().asFile}")
+    }
 }
 
 javadoc {
@@ -212,6 +222,12 @@ java {
 jar {
     dependsOn(tasks.named("generateBetterXResources"))
     dependsOn(tasks.named("syncGeneratedResources"))
+    doFirst {
+        def refmapFile = layout.buildDirectory.file("resources/main/${refmapName}").get().asFile
+        if (!refmapFile.exists()) {
+            throw new GradleException("Missing mixin refmap: ${refmapFile}")
+        }
+    }
     manifest {
         attributes(
                 "MixinConfigs": String.join(",",
