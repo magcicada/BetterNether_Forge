@@ -510,5 +510,5 @@ tasks.register("copyModrinthJars", Copy) {
 
 tasks.named("build") {
     dependsOn(tasks.named("generateBetterXResources"))
-    finalizedBy("copyDistJars", "copyModrinthJars")
+    //finalizedBy("copyDistJars", "copyModrinthJars")
 }
