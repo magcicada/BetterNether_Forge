@@ -58,7 +58,10 @@ public class JEIForgeCategory implements IRecipeCategory<AbstractCookingRecipe> 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, AbstractCookingRecipe recipe, IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(recipe.getIngredients().get(0));
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 61, 19).addItemStack(recipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level != null) {
+            builder.addSlot(RecipeIngredientRole.OUTPUT, 61, 19).addItemStack(recipe.getResultItem(minecraft.level.registryAccess()));
+        }
     }
 
     @Override

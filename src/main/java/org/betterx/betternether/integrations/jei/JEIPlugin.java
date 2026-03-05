@@ -6,6 +6,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
@@ -33,7 +34,11 @@ public class JEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        RecipeManager manager = net.minecraft.client.Minecraft.getInstance().level.getRecipeManager();
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level == null) {
+            return;
+        }
+        RecipeManager manager = minecraft.level.getRecipeManager();
 
         List<AbstractCookingRecipe> smeltingRecipes = (List) manager.getAllRecipesFor(net.minecraft.world.item.crafting.RecipeType.SMELTING);
 
