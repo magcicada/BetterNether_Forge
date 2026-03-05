@@ -46,7 +46,6 @@ targetCompatibility = JavaVersion.VERSION_17
 archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
-def refmapName = "${project.mod_id}.refmap.json"
 
 def local_bclib = findProject(':BCLib') != null
 def local_wunderlib = findProject(':WunderLib') != null
@@ -210,18 +209,9 @@ processResources {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    def refmapOutput = layout.buildDirectory.file("resources/main/${refmapName}")
-    outputs.file(refmapOutput)
-
+tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
     it.options.release = 17
-
-    doFirst {
-        def args = options.compilerArgs
-        args.removeAll { it.startsWith("-AoutRefMapFile=") }
-        args.add("-AoutRefMapFile=${refmapOutput.get().asFile}")
-    }
 }
 
 javadoc {
@@ -245,12 +235,6 @@ java {
 jar {
     dependsOn(tasks.named("generateBetterXResources"))
     dependsOn(tasks.named("syncGeneratedResources"))
-    doFirst {
-        def refmapFile = layout.buildDirectory.file("resources/main/${refmapName}").get().asFile
-        if (!refmapFile.exists()) {
-            throw new GradleException("Missing mixin refmap: ${refmapFile}")
-        }
-    }
     manifest {
         attributes(
                 "MixinConfigs": String.join(",",
@@ -461,31 +445,6 @@ task nextVersion() {
         def newContents = propertiesFile.text.replaceFirst("mod_version=\\d+.\\d+.\\d+", "mod_version=${updatedVersion}")
         propertiesFile.text = newContents
     }
-}
-
-def distDir = new File(rootProject.projectDir.parentFile, "betterx-dist 1.20.1")
-def modrinthModsDir = new File("C:/Users/Redmi/AppData/Roaming/ModrinthApp/profiles/1.20.1 (1)/mods")
-def betterNetherReobfJar = layout.buildDirectory.file("reobfJar/output.jar")
-def bclibReobfJar = project(":BCLib").layout.buildDirectory.file("reobfJar/output.jar")
-def wunderlibReobfJar = project(":WunderLib").layout.buildDirectory.file("reobfJar/output.jar")
-tasks.register("copyDistJars", Copy) {
-    dependsOn(tasks.named("reobfJar"))
-    from(betterNetherReobfJar) {
-        rename { tasks.named("jar").get().archiveFileName.get() }
-    }
-    if (local_bclib) {
-        dependsOn(project(":BCLib").tasks.named("reobfJar"))
-        from(bclibReobfJar) {
-            rename { project(":BCLib").tasks.named("jar").get().archiveFileName.get() }
-        }
-    }
-    if (local_wunderlib) {
-        dependsOn(project(":WunderLib").tasks.named("reobfJar"))
-        from(wunderlibReobfJar) {
-            rename { project(":WunderLib").tasks.named("jar").get().archiveFileName.get() }
-        }
-    }
-    into(distDir)
 }
 
 tasks.named("build") {
