@@ -48,9 +48,20 @@ public class StructureCityBuilding extends NetherStructureNBT {
     }
 
     private void init() {
-        Vec3i size = structure.getSize();
+        StructureTemplate template = getStructure();
+        if (template == null) {
+            BetterNether.LOGGER.error("Failed to load city structure: " + location);
+            bb = new BoundingBox2D(0, 0, 0, 0);
+            ends = new BlockPos[0];
+            dirs = new Direction[0];
+            rotationOffset = BlockPos.ZERO;
+            rotation = Rotation.NONE;
+            return;
+        }
+
+        Vec3i size = template.getSize();
         bb = new BoundingBox2D(0, 0, size.getX(), size.getZ());
-        List<StructureBlockInfo> map = structure.filterBlocks(
+        List<StructureBlockInfo> map = template.filterBlocks(
                 BlockPos.ZERO,
                 new StructurePlaceSettings(),
                 Blocks.STRUCTURE_BLOCK,
@@ -104,8 +115,13 @@ public class StructureCityBuilding extends NetherStructureNBT {
             BoundingBox boundingBox,
             StructureProcessor paletteProcessor
     ) {
+        StructureTemplate template = getStructure(world);
+        if (template == null) {
+            BetterNether.LOGGER.error("Failed to place city structure: " + location);
+            return;
+        }
         BlockPos p = pos.offset(rotationOffset);
-        structure.placeInWorld(world, p, p, new StructurePlaceSettings()
+        template.placeInWorld(world, p, p, new StructurePlaceSettings()
                         .setRotation(rotation)
                         .setMirror(mirror)
                         .setBoundingBox(boundingBox)
@@ -133,7 +149,7 @@ public class StructureCityBuilding extends NetherStructureNBT {
     public StructureCityBuilding getRotated(Rotation rotation) {
         StructureCityBuilding building = this.clone();
         building.rotation = rotation;
-        building.rotationOffset = new BlockPos(building.structure.getSize()).rotate(rotation);
+        building.rotationOffset = new BlockPos(building.getSize(Rotation.NONE)).rotate(rotation);
         int x = building.rotationOffset.getX();
         int z = building.rotationOffset.getZ();
         if (x < 0)
@@ -197,16 +213,13 @@ public class StructureCityBuilding extends NetherStructureNBT {
      */
 
     public BoundingBox getBoundingBox(BlockPos pos) {
-        return structure.getBoundingBox(
-                new StructurePlaceSettings().setRotation(this.rotation).setMirror(mirror),
-                pos.offset(rotationOffset)
-        );
+        return super.getBoundingBox(pos.offset(rotationOffset), this.rotation, mirror);
     }
 
     @Override
     public StructureCityBuilding setRotation(Rotation rotation) {
         this.rotation = rotation;
-        rotationOffset = new BlockPos(structure.getSize()).rotate(rotation);
+        rotationOffset = new BlockPos(getSize(Rotation.NONE)).rotate(rotation);
         return this;
     }
 }
